@@ -67,7 +67,7 @@ function App() {
 
           {isError && (
             <p className={css.error}>
-              Whoops, something went wrong! Please try again!
+              Whoops, something went wrong! Please try again.
             </p>
           )}
         </section>
