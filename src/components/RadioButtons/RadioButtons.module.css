@@ -1,0 +1,21 @@
+.fieldset {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.legend {
+  color: var(--muted);
+}
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+.option:hover {
+  background: var(--surface);
+}
+.option input {
+  accent-color: var(--brand);
+}

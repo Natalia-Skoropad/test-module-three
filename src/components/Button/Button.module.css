@@ -1,0 +1,37 @@
+.button {
+  font-weight: 600;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 40px;
+  min-width: 120px;
+  padding: 0 16px;
+
+  border-radius: 10px;
+  border: 1px solid transparent;
+
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.02s ease, filter 0.2s ease;
+}
+
+.normal {
+  background: #764191;
+  color: white;
+}
+
+.normal:hover,
+.normal:focus {
+  background: #a75ccc;
+}
+
+.reset {
+  background: #992b2b;
+  color: white;
+}
+
+.reset:hover,
+.reset:focus {
+  background: #974444;
+}
