@@ -21,6 +21,7 @@
 .toggle:hover {
   background: rgba(118, 65, 145, 0.08);
 }
+
 :root[data-theme='dark'] .toggle:hover {
   background: rgba(255, 255, 255, 0.06);
 }
@@ -32,6 +33,7 @@
 .icon {
   line-height: 1;
 }
+
 .text {
   font-weight: 600;
   font-size: 14px;

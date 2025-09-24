@@ -1,15 +1,11 @@
+import type { ButtonProps } from './ButtonProps';
+
 import clsx from 'clsx';
 import css from './Button.module.css';
 
-// ================================================================
+export default Button;
 
-interface ButtonProps {
-  variant?: 'normal' | 'reset';
-  text: string;
-  type?: 'submit' | 'button';
-  onClick?: () => void;
-  disabled?: boolean;
-}
+// ================================================================
 
 function Button({
   variant = 'normal',
@@ -29,5 +25,3 @@ function Button({
     </button>
   );
 }
-
-export default Button;

@@ -51,6 +51,14 @@ function App() {
     console.log('Order received from:', data);
   };
 
+  const handleSecondOrderSubmit = (data: {
+    username: string;
+    email: string;
+    notes: string;
+  }) => {
+    console.log('Second order from App:', data);
+  };
+
   return (
     <>
       <ThemeToggle />
@@ -93,7 +101,7 @@ function App() {
         </section>
 
         <section className={clsx(css.card, css.stack)}>
-          <SecondOrderForm />
+          <SecondOrderForm onSubmit={handleSecondOrderSubmit} />
         </section>
 
         <section className={clsx(css.card, css.stack)}>

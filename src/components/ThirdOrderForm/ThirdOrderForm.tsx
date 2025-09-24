@@ -1,12 +1,5 @@
-import { useId, useRef, useState } from 'react';
-import type { JSX, ChangeEvent } from 'react';
-
-import {
-  Button,
-  ValidatedInput,
-  ValidatedTextarea,
-  FieldError,
-} from '../../index';
+import { useState } from 'react';
+import { Button } from '../../index';
 
 import {
   readString,
@@ -17,9 +10,15 @@ import {
 
 import css from './ThirdOrderForm.module.css';
 
+import ClientInfo from './ClientInfo';
+import DeliveryMethod from './DeliveryMethod';
+import DietaryRestrictions from './DietaryRestrictions';
+import PreferredDeliveryTime from './PreferredDeliveryTime';
+import Notes from './Notes';
+
 // ===============================================================
 
-interface OrderData {
+export interface OrderData {
   username: string;
   email: string;
   delivery: string;
@@ -28,26 +27,15 @@ interface OrderData {
   notes: string;
 }
 
-export default function ThirdOrderForm(): JSX.Element {
-  const uid = useId();
-  const formRef = useRef<HTMLFormElement>(null);
-
-  // стани помилок (для submit + live)
+export default function ThirdOrderForm() {
   const [nameErr, setNameErr] = useState('');
   const [emailErr, setEmailErr] = useState('');
   const [notesErr, setNotesErr] = useState('');
   const [timeErr, setTimeErr] = useState('');
 
-  const timeId = `${uid}-deliveryTime`;
-  const timeErrId = `${timeId}-error`;
-
   const validateTime = (v: string) => (v ? '' : 'Please choose delivery time');
 
-  const handleTimeInput = (e: ChangeEvent<HTMLSelectElement>) => {
-    setTimeErr(validateTime(e.target.value));
-  };
-
-  const handleOrder = (fd: FormData): void => {
+  const handleSubmit = (fd: FormData) => {
     const order: OrderData = {
       username: readString(fd, 'username'),
       email: readString(fd, 'email'),
@@ -57,21 +45,20 @@ export default function ThirdOrderForm(): JSX.Element {
       notes: readString(fd, 'notes'),
     };
 
-    // фінальна перевірка (використовуємо поточні помилки або перевіряємо значення)
-    const finalNameErr = nameErr || validateName(order.username);
-    const finalEmailErr = emailErr || validateEmail(order.email);
-    const finalNotesErr = notesErr || validateMessage(order.notes);
-    const finalTimeErr = timeErr || validateTime(order.deliveryTime);
+    const nErr = validateName(order.username);
+    const eErr = validateEmail(order.email);
+    const mErr = validateMessage(order.notes);
+    const tErr = validateTime(order.deliveryTime);
 
-    if (finalNameErr || finalEmailErr || finalNotesErr || finalTimeErr) {
-      setNameErr(finalNameErr ?? '');
-      setEmailErr(finalEmailErr ?? '');
-      setNotesErr(finalNotesErr ?? '');
-      setTimeErr(finalTimeErr ?? '');
+    if (nErr || eErr || mErr || tErr) {
+      setNameErr(nErr ?? '');
+      setEmailErr(eErr ?? '');
+      setNotesErr(mErr ?? '');
+      setTimeErr(tErr ?? '');
       return;
     }
 
-    // тут можна надіслати order на сервер
+    // TODO: submit to API
     console.log('Order placed:', {
       ...order,
       username: order.username.trim(),
@@ -79,8 +66,6 @@ export default function ThirdOrderForm(): JSX.Element {
       notes: order.notes.trim(),
     });
 
-    // очистка форми та помилок
-    formRef.current?.reset();
     setNameErr('');
     setEmailErr('');
     setNotesErr('');
@@ -92,101 +77,22 @@ export default function ThirdOrderForm(): JSX.Element {
       <h2>Third Order Form</h2>
       <h3>Complete your order</h3>
 
-      <form ref={formRef} className={css.form} action={handleOrder} noValidate>
-        {/* 1) Client info */}
-        <fieldset className={css.fieldset}>
-          <legend className={css.legend}>Client info</legend>
+      <form className={css.form} action={handleSubmit} noValidate>
+        <ClientInfo
+          nameError={nameErr}
+          emailError={emailErr}
+          onNameErrorChange={setNameErr}
+          onEmailErrorChange={setEmailErr}
+        />
 
-          <ValidatedInput
-            name="username"
-            label="Name"
-            placeholder="Enter your name"
-            validator={validateName}
-            externalError={nameErr}
-            onErrorChange={setNameErr}
-          />
+        <DeliveryMethod />
 
-          <ValidatedInput
-            name="email"
-            label="Email"
-            placeholder="Enter your email"
-            type="email"
-            validator={validateEmail}
-            externalError={emailErr}
-            onErrorChange={setEmailErr}
-          />
-        </fieldset>
+        <DietaryRestrictions />
 
-        {/* 2) Delivery method */}
-        <fieldset className={css.fieldset}>
-          <legend className={css.legend}>Delivery method</legend>
+        <PreferredDeliveryTime error={timeErr} onErrorChange={setTimeErr} />
 
-          <label className={css.option}>
-            <input type="radio" name="delivery" value="pickup" defaultChecked />
-            Pickup
-          </label>
-          <label className={css.option}>
-            <input type="radio" name="delivery" value="courier" />
-            Courier
-          </label>
-          <label className={css.option}>
-            <input type="radio" name="delivery" value="drone" />
-            Drone delivery
-          </label>
-        </fieldset>
+        <Notes error={notesErr} onErrorChange={setNotesErr} />
 
-        {/* 3) Dietary restrictions */}
-        <fieldset className={css.fieldset}>
-          <legend className={css.legend}>Dietary restrictions</legend>
-
-          <label className={css.option}>
-            <input type="checkbox" name="restrictions" value="vegan" />
-            Vegan
-          </label>
-          <label className={css.option}>
-            <input type="checkbox" name="restrictions" value="gluten-free" />
-            Gluten-free
-          </label>
-          <label className={css.option}>
-            <input type="checkbox" name="restrictions" value="nut-free" />
-            Nut-free
-          </label>
-        </fieldset>
-
-        <fieldset className={css.fieldset}>
-          <legend className={css.legend}>Preferred delivery time</legend>
-          <div className={css.field}>
-            <select
-              id={timeId}
-              name="deliveryTime"
-              defaultValue=""
-              className={css.select}
-              onInput={handleTimeInput}
-              aria-invalid={!!timeErr}
-              aria-describedby={timeErr ? timeErrId : undefined}
-            >
-              <option value="">-- Choose delivery time --</option>
-              <option value="morning">Morning (8:00–12:00)</option>
-              <option value="afternoon">Afternoon (12:00–16:00)</option>
-              <option value="evening">Evening (16:00–20:00)</option>
-            </select>
-            <FieldError id={timeErrId} message={timeErr} />
-          </div>
-        </fieldset>
-
-        {/* 5) Notes */}
-        <fieldset className={css.fieldset}>
-          <legend className={css.legend}>Write to us</legend>
-          <ValidatedTextarea
-            name="notes"
-            label="Notes"
-            placeholder="Delivery notes…"
-            rows={5}
-            validator={validateMessage}
-            externalError={notesErr}
-            onErrorChange={setNotesErr}
-          />
-        </fieldset>
         <Button
           text="Place order"
           variant="normal"

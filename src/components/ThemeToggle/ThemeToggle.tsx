@@ -1,28 +1,28 @@
 import { useEffect, useState } from 'react';
 import css from './ThemeToggle.module.css';
 
+// ===============================================================
+
 type Theme = 'light' | 'dark';
 const STORAGE_KEY = 'theme';
 
 function getInitialTheme(): Theme {
-  // 1) якщо є збережений вибір — беремо його
   const saved = localStorage.getItem(STORAGE_KEY) as Theme | null;
   if (saved === 'light' || saved === 'dark') return saved;
 
-  // 2) інакше — системна перевага
   const prefersDark = window.matchMedia?.(
     '(prefers-color-scheme: dark)'
   ).matches;
   return prefersDark ? 'dark' : 'light';
 }
 
+// ===============================================================
+
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
 
   useEffect(() => {
-    // виставляємо атрибут на <html>
     document.documentElement.dataset.theme = theme;
-    // зберігаємо вибір
     localStorage.setItem(STORAGE_KEY, theme);
   }, [theme]);
 

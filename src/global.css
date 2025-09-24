@@ -1,5 +1,4 @@
 :root {
-  /* Палiтра та токени */
   --brand: #764191;
   --brand-600: #69397f;
 
@@ -20,7 +19,6 @@
   --space-6: 48px;
 }
 
-/* Підказка для нативних контролів і автотеми */
 html {
   color-scheme: light dark;
 }
@@ -28,6 +26,7 @@ html {
 * {
   box-sizing: border-box;
 }
+
 html,
 body,
 #root {
@@ -56,6 +55,7 @@ a {
   color: var(--brand);
   text-underline-offset: 2px;
 }
+
 a:hover {
   text-decoration: underline;
 }
@@ -68,11 +68,13 @@ ul,
 ol {
   margin: 0;
 }
+
 h2 {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: var(--space-3);
 }
+
 h3 {
   font-size: 16px;
   font-weight: 600;
@@ -88,7 +90,6 @@ textarea {
   color: inherit;
 }
 
-/* База для контролів форми */
 input[type='text'],
 input[type='email'],
 select,
@@ -125,17 +126,18 @@ fieldset {
   padding: var(--space-3);
   border-radius: 10px;
 }
+
 legend {
   padding: 0 6px;
   color: var(--muted);
   font-weight: 600;
 }
 
-/* Утиліти */
 .form {
   display: grid;
   gap: var(--space-3);
-} /* використовується через composes */
+}
+
 .visually-hidden {
   position: absolute !important;
   width: 1px;
@@ -148,7 +150,6 @@ legend {
   border: 0;
 }
 
-/* Темна тема (атрибут на <html>) */
 :root[data-theme='dark'] {
   --bg: #0b0f19;
   --surface: #111827;
