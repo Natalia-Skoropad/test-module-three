@@ -1,5 +1,4 @@
 .list {
-  margin: 0;
   padding-left: 18px;
   display: grid;
   gap: 10px;
@@ -12,9 +11,4 @@
 .link {
   color: var(--brand);
   font-weight: 500;
-}
-
-.link:hover,
-.link:focus {
-  text-decoration: underline;
 }

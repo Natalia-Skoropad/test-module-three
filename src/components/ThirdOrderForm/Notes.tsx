@@ -1,15 +1,15 @@
 import { ValidatedTextarea } from '../../index';
-import { validateMessage } from '../../utils/validation';
 import css from './ThirdOrderForm.module.css';
 
 // ===============================================================
 
 type Props = {
+  value: string;
   error: string;
-  onErrorChange: (m: string) => void;
+  onChange: (v: string) => void;
 };
 
-export default function Notes({ error, onErrorChange }: Props) {
+export default function Notes({ value, error, onChange }: Props) {
   return (
     <fieldset className={css.fieldset}>
       <legend className={css.legend}>Write to us</legend>
@@ -19,9 +19,9 @@ export default function Notes({ error, onErrorChange }: Props) {
         label="Notes"
         placeholder="Delivery notes…"
         rows={5}
-        validator={validateMessage}
-        externalError={error}
-        onErrorChange={onErrorChange}
+        value={value}
+        onChangeValue={onChange}
+        error={error}
       />
     </fieldset>
   );

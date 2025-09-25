@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { Button, ValidatedInput } from '../../index';
 import { readString, validateTopic } from '../../utils/validation';
+import { useLocalStorageString } from '../../utils/useLocalStorageString';
 
 import css from './SearchForm.module.css';
 
@@ -11,16 +12,28 @@ interface SearchFormProps {
   onSubmit: (topic: string) => void;
 }
 
+const LS_KEY = 'searchForm.topic';
+
 function SearchForm({ onSubmit }: SearchFormProps) {
-  const [topicError, setTopicError] = useState('');
+  const [topic, setTopic] = useLocalStorageString(LS_KEY, '');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (fd: FormData) => {
-    const topic = readString(fd, 'topic');
+  const handleChange = (val: string) => {
+    setTopic(val);
+    setError(validateTopic(val) ?? '');
+  };
+
+  const handleSubmit = (formaDate: FormData) => {
+    const topic = readString(formaDate, 'topic');
+
     const err = validateTopic(topic);
-    if (err) return setTopicError(err);
+    if (err) return setError(err);
 
-    setTopicError('');
-    onSubmit(topic.trim());
+    const trimmed = topic.trim();
+    onSubmit(trimmed);
+
+    setTopic('');
+    setError('');
   };
 
   return (
@@ -34,9 +47,9 @@ function SearchForm({ onSubmit }: SearchFormProps) {
           label="Search"
           srOnlyLabel
           placeholder="Enter search topic"
-          validator={validateTopic}
-          externalError={topicError}
-          onErrorChange={setTopicError}
+          value={topic}
+          onChangeValue={handleChange}
+          error={error}
         />
         <Button text="Search" variant="normal" type="submit" />
       </form>

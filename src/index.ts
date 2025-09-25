@@ -16,5 +16,8 @@ export { default as ThirdOrderForm } from './components/ThirdOrderForm/ThirdOrde
 export { default as RadioButtons } from './components/RadioButtons/RadioButtons';
 export { default as Checkboxes } from './components/Checkboxes/Checkboxes';
 export { default as DropDownList } from './components/DropDownList/DropDownList';
+export { default as BoxTimer } from './components/BoxTimer/BoxTimer';
+export { default as ModalBox } from './components/ModalBox/ModalBox';
+export { default as Counter } from './components/Counter/Counter';
 
 export { default as ThemeToggle } from './components/ThemeToggle/ThemeToggle';

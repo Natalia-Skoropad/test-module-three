@@ -13,6 +13,9 @@ import {
   ThemeToggle,
   Loader,
   ThirdOrderForm,
+  BoxTimer,
+  ModalBox,
+  Counter,
 } from '../../index';
 
 import type { Article } from '../../types/article';
@@ -118,6 +121,18 @@ function App() {
 
         <section className={clsx(css.card, css.stack)}>
           <ThirdOrderForm />
+        </section>
+
+        <section className={clsx(css.card, css.stack)}>
+          <BoxTimer />
+        </section>
+
+        <section className={clsx(css.card, css.stack)}>
+          <ModalBox />
+        </section>
+
+        <section className={clsx(css.card, css.stack)}>
+          <Counter />
         </section>
       </main>
     </>

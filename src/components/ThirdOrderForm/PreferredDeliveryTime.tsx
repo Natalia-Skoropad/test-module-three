@@ -1,6 +1,7 @@
-import { useId, useState, useEffect } from 'react';
+import { useId } from 'react';
 import type { ChangeEvent } from 'react';
 import { FieldError } from '../../index';
+
 import css from './ThirdOrderForm.module.css';
 
 // ===============================================================
@@ -15,17 +16,16 @@ export default function PreferredDeliveryTime({ error, onErrorChange }: Props) {
   const selectId = `${uid}-deliveryTime`;
   const errorId = `${selectId}-error`;
 
-  const [localError, setLocalError] = useState(error);
-
-  useEffect(() => setLocalError(error), [error]);
-
   const validateTime = (v: string) => (v ? '' : 'Please choose delivery time');
 
-  const handleInput = (e: ChangeEvent<HTMLSelectElement>) => {
-    const next = validateTime(e.target.value);
-    setLocalError(next);
-    onErrorChange(next);
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    onErrorChange(validateTime(e.target.value));
   };
+
+  const handleBlur = (e: ChangeEvent<HTMLSelectElement>) => {
+    onErrorChange(validateTime(e.target.value));
+  };
+
   return (
     <fieldset className={css.fieldset}>
       <legend className={css.legend}>Preferred delivery time</legend>
@@ -35,10 +35,11 @@ export default function PreferredDeliveryTime({ error, onErrorChange }: Props) {
           id={selectId}
           name="deliveryTime"
           defaultValue=""
-          className={`${css.select} ${localError ? css.inputError : ''}`}
-          onInput={handleInput}
-          aria-invalid={!!localError}
-          aria-describedby={localError ? errorId : undefined}
+          className={`${css.select} ${error ? css.selectError : ''}`}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          aria-invalid={!!error}
+          aria-describedby={error ? errorId : undefined}
         >
           <option value="">-- Choose delivery time --</option>
           <option value="morning">Morning (8:00–12:00)</option>
@@ -46,7 +47,7 @@ export default function PreferredDeliveryTime({ error, onErrorChange }: Props) {
           <option value="evening">Evening (16:00–20:00)</option>
         </select>
 
-        <FieldError id={errorId} message={localError} />
+        <FieldError id={errorId} message={error} />
       </div>
     </fieldset>
   );

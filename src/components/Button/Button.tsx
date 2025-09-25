@@ -1,11 +1,17 @@
-import type { ButtonProps } from './ButtonProps';
-
 import clsx from 'clsx';
 import css from './Button.module.css';
 
 export default Button;
 
 // ================================================================
+interface ButtonProps {
+  variant?: 'normal' | 'reset';
+  text?: string;
+  type?: 'submit' | 'button';
+  onClick?: () => void;
+  disabled?: boolean;
+  children?: React.ReactNode;
+}
 
 function Button({
   variant = 'normal',
@@ -13,6 +19,7 @@ function Button({
   type = 'button',
   onClick,
   disabled,
+  children,
 }: ButtonProps) {
   return (
     <button
@@ -21,7 +28,7 @@ function Button({
       onClick={onClick}
       disabled={disabled}
     >
-      {text}
+      {children ?? text}
     </button>
   );
 }

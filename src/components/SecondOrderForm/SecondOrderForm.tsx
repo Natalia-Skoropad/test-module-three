@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { Button, ValidatedInput, ValidatedTextarea } from '../../index';
 
 import {
-  readString,
   validateName,
   validateEmail,
   validateMessage,
 } from '../../utils/validation';
+
+import { useLocalStorageString } from '../../utils/useLocalStorageString';
+import { readString } from '../../utils/validation';
 
 import css from './SecondOrderForm.module.css';
 
@@ -16,35 +18,63 @@ interface SecondOrderFormProps {
   onSubmit: (data: { username: string; email: string; notes: string }) => void;
 }
 
+const LS = {
+  name: 'secondOrder.username',
+  email: 'secondOrder.email',
+  notes: 'secondOrder.notes',
+} as const;
+
 export default function SecondOrderForm({ onSubmit }: SecondOrderFormProps) {
+  const [username, setUsername] = useLocalStorageString(LS.name, '');
+  const [email, setEmail] = useLocalStorageString(LS.email, '');
+  const [notes, setNotes] = useLocalStorageString(LS.notes, '');
+
   const [nameErr, setNameErr] = useState('');
   const [emailErr, setEmailErr] = useState('');
   const [notesErr, setNotesErr] = useState('');
 
-  const handleSubmit = (fd: FormData) => {
-    const username = readString(fd, 'username');
-    const email = readString(fd, 'email');
-    const notes = readString(fd, 'notes');
+  const handleNameChange = (v: string) => {
+    setUsername(v);
+    setNameErr(validateName(v) ?? '');
+  };
 
-    const nErr = validateName(username);
-    const eErr = validateEmail(email);
-    const mErr = validateMessage(notes);
+  const handleEmailChange = (v: string) => {
+    setEmail(v);
+    setEmailErr(validateEmail(v) ?? '');
+  };
 
-    if (nErr || eErr || mErr) {
-      setNameErr(nErr ?? '');
-      setEmailErr(eErr ?? '');
-      setNotesErr(mErr ?? '');
-      return;
-    }
+  const handleNotesChange = (v: string) => {
+    setNotes(v);
+    setNotesErr(validateMessage(v) ?? '');
+  };
 
-    setNameErr('');
-    setEmailErr('');
-    setNotesErr('');
+  const handleSubmit = (formaDate: FormData) => {
+    const username = readString(formaDate, 'username');
+    const email = readString(formaDate, 'email');
+    const notes = readString(formaDate, 'notes');
+
+    const nErr = validateName(username) ?? '';
+    const eErr = validateEmail(email) ?? '';
+    const mErr = validateMessage(notes) ?? '';
+
+    setNameErr(nErr);
+    setEmailErr(eErr);
+    setNotesErr(mErr);
+
+    if (nErr || eErr || mErr) return;
+
     onSubmit({
       username: username.trim(),
       email: email.trim(),
       notes: notes.trim(),
     });
+
+    setUsername('');
+    setEmail('');
+    setNotes('');
+    setNameErr('');
+    setEmailErr('');
+    setNotesErr('');
   };
 
   return (
@@ -58,9 +88,9 @@ export default function SecondOrderForm({ onSubmit }: SecondOrderFormProps) {
           label="Name"
           srOnlyLabel
           placeholder="Enter your name"
-          validator={validateName}
-          externalError={nameErr}
-          onErrorChange={setNameErr}
+          value={username}
+          onChangeValue={handleNameChange}
+          error={nameErr}
         />
 
         <ValidatedInput
@@ -69,9 +99,9 @@ export default function SecondOrderForm({ onSubmit }: SecondOrderFormProps) {
           srOnlyLabel
           placeholder="Enter your email"
           type="email"
-          validator={validateEmail}
-          externalError={emailErr}
-          onErrorChange={setEmailErr}
+          value={email}
+          onChangeValue={handleEmailChange}
+          error={emailErr}
         />
 
         <ValidatedTextarea
@@ -79,9 +109,9 @@ export default function SecondOrderForm({ onSubmit }: SecondOrderFormProps) {
           label="Notes"
           placeholder="Delivery notes…"
           rows={5}
-          validator={validateMessage}
-          externalError={notesErr}
-          onErrorChange={setNotesErr}
+          value={notes}
+          onChangeValue={handleNotesChange}
+          error={notesErr}
         />
 
         <Button text="Place order" variant="normal" type="submit" />

@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { Button, ValidatedInput } from '../../index';
 import { readString, validateName } from '../../utils/validation';
+import { useLocalStorageString } from '../../utils/useLocalStorageString';
 
 import css from './FirstOrderForm.module.css';
 
@@ -11,16 +12,28 @@ interface FirstOrderFormProps {
   onSubmit: (value: string) => void;
 }
 
+const LS_KEY = 'firstOrder.username';
+
 function FirstOrderForm({ onSubmit }: FirstOrderFormProps) {
-  const [nameError, setNameError] = useState('');
+  const [username, setUsername] = useLocalStorageString(LS_KEY, '');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (fd: FormData) => {
-    const username = readString(fd, 'username');
+  const handleChange = (val: string) => {
+    setUsername(val);
+    setError(validateName(val) ?? '');
+  };
+
+  const handleSubmit = (formaDate: FormData) => {
+    const username = readString(formaDate, 'username');
+
     const err = validateName(username);
-    if (err) return setNameError(err);
+    if (err) return setError(err);
 
-    setNameError('');
-    onSubmit(username.trim());
+    const trimmed = username.trim();
+    onSubmit(trimmed);
+
+    setUsername('');
+    setError('');
   };
 
   return (
@@ -34,9 +47,9 @@ function FirstOrderForm({ onSubmit }: FirstOrderFormProps) {
           label="Username"
           srOnlyLabel
           placeholder="Enter your name"
-          validator={validateName}
-          externalError={nameError}
-          onErrorChange={setNameError}
+          value={username}
+          onChangeValue={handleChange}
+          error={error}
         />
         <Button text="Place order" variant="normal" type="submit" />
       </form>

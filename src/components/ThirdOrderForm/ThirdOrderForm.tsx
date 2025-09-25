@@ -8,6 +8,8 @@ import {
   validateMessage,
 } from '../../utils/validation';
 
+import { useLocalStorageString } from '../../utils/useLocalStorageString';
+
 import css from './ThirdOrderForm.module.css';
 
 import ClientInfo from './ClientInfo';
@@ -27,11 +29,36 @@ export interface OrderData {
   notes: string;
 }
 
+const LS = {
+  name: 'thirdOrder.username',
+  email: 'thirdOrder.email',
+  notes: 'thirdOrder.notes',
+} as const;
+
 export default function ThirdOrderForm() {
+  const [username, setUsername] = useLocalStorageString(LS.name, '');
+  const [email, setEmail] = useLocalStorageString(LS.email, '');
+  const [notes, setNotes] = useLocalStorageString(LS.notes, '');
+
   const [nameErr, setNameErr] = useState('');
   const [emailErr, setEmailErr] = useState('');
   const [notesErr, setNotesErr] = useState('');
   const [timeErr, setTimeErr] = useState('');
+
+  const handleNameChange = (v: string) => {
+    setUsername(v);
+    setNameErr(validateName(v) ?? '');
+  };
+
+  const handleEmailChange = (v: string) => {
+    setEmail(v);
+    setEmailErr(validateEmail(v) ?? '');
+  };
+
+  const handleNotesChange = (v: string) => {
+    setNotes(v);
+    setNotesErr(validateMessage(v) ?? '');
+  };
 
   const validateTime = (v: string) => (v ? '' : 'Please choose delivery time');
 
@@ -70,7 +97,17 @@ export default function ThirdOrderForm() {
     setEmailErr('');
     setNotesErr('');
     setTimeErr('');
+
+    setUsername('');
+    setEmail('');
+    setNotes('');
+
+    localStorage.removeItem(LS.name);
+    localStorage.removeItem(LS.email);
+    localStorage.removeItem(LS.notes);
   };
+
+  const isDisabled = !!(nameErr || emailErr || notesErr || timeErr);
 
   return (
     <>
@@ -79,25 +116,24 @@ export default function ThirdOrderForm() {
 
       <form className={css.form} action={handleSubmit} noValidate>
         <ClientInfo
+          nameValue={username}
+          emailValue={email}
           nameError={nameErr}
           emailError={emailErr}
-          onNameErrorChange={setNameErr}
-          onEmailErrorChange={setEmailErr}
+          onNameChange={handleNameChange}
+          onEmailChange={handleEmailChange}
         />
 
         <DeliveryMethod />
-
         <DietaryRestrictions />
-
         <PreferredDeliveryTime error={timeErr} onErrorChange={setTimeErr} />
-
-        <Notes error={notesErr} onErrorChange={setNotesErr} />
+        <Notes value={notes} error={notesErr} onChange={handleNotesChange} />
 
         <Button
           text="Place order"
           variant="normal"
           type="submit"
-          disabled={!!(nameErr || emailErr || notesErr || timeErr)}
+          disabled={isDisabled}
         />
       </form>
     </>

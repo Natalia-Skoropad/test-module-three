@@ -1,21 +1,24 @@
 import { ValidatedInput } from '../../index';
-import { validateName, validateEmail } from '../../utils/validation';
 import css from './ThirdOrderForm.module.css';
 
 // ===============================================================
 
 type Props = {
+  nameValue: string;
+  emailValue: string;
   nameError: string;
   emailError: string;
-  onNameErrorChange: (m: string) => void;
-  onEmailErrorChange: (m: string) => void;
+  onNameChange: (v: string) => void;
+  onEmailChange: (v: string) => void;
 };
 
 export default function ClientInfo({
+  nameValue,
+  emailValue,
   nameError,
   emailError,
-  onNameErrorChange,
-  onEmailErrorChange,
+  onNameChange,
+  onEmailChange,
 }: Props) {
   return (
     <fieldset className={css.fieldset}>
@@ -25,9 +28,9 @@ export default function ClientInfo({
         name="username"
         label="Name"
         placeholder="Enter your name"
-        validator={validateName}
-        externalError={nameError}
-        onErrorChange={onNameErrorChange}
+        value={nameValue}
+        onChangeValue={onNameChange}
+        error={nameError}
       />
 
       <ValidatedInput
@@ -35,9 +38,9 @@ export default function ClientInfo({
         label="Email"
         placeholder="Enter your email"
         type="email"
-        validator={validateEmail}
-        externalError={emailError}
-        onErrorChange={onEmailErrorChange}
+        value={emailValue}
+        onChangeValue={onEmailChange}
+        error={emailError}
       />
     </fieldset>
   );

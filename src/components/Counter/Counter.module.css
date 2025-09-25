@@ -1,0 +1,14 @@
+.div {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text);
+
+  margin: 0;
+  transition: opacity 0.2s ease;
+  opacity: 1;
+  visibility: visible;
+}
